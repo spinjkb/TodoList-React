@@ -36,3 +36,9 @@ ol li{
   width: 20em;
   padding: 10px
 }
+ol li input{
+  float: left
+}
+ol li button{
+  float: right
+}
