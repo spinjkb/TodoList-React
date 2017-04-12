@@ -53,7 +53,7 @@ class App extends Component {
   }
   addTodo(event) {
     if (event.target.value === '') {
-      alert('输入为空')
+      alert('请输入内容')
     } else {
       this.state.todoList.push({
         id: idMaker(),
