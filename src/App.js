@@ -14,12 +14,12 @@ class App extends Component {
     }
   }
   render() {
-    let todos = this.state.todoList.filter((item)=> !item.deleted).map((item,index)=> {
+    let todos = this.state.todoList.filter((item) => !item.deleted).map((item, index) => {
       return (
         <li key={index}>
-          <TodoItem todo={item} 
-          onToggle={this.toggle.bind(this)}
-          onDelete={this.delete.bind(this)}/>
+          <TodoItem todo={item}
+            onToggle={this.toggle.bind(this)}
+            onDelete={this.delete.bind(this)} />
         </li>
       )
     })
@@ -27,9 +27,9 @@ class App extends Component {
       <div className="App">
         <h1>我的待办</h1>
         <div className="inputWrapper">
-          <TodoInput content={this.state.newTodo} 
-          onChange={this.changeTitle.bind(this)}
-          onSubmit={this.addTodo.bind(this)}/>
+          <TodoInput content={this.state.newTodo}
+            onChange={this.changeTitle.bind(this)}
+            onSubmit={this.addTodo.bind(this)} />
         </div>
         <ol className="todoList">
           {todos}
@@ -37,32 +37,36 @@ class App extends Component {
       </div>
     );
   }
-  changeTitle(event){
+  changeTitle(event) {
     this.setState({
       newTodo: event.target.value,
-      todoList:this.state.todoList
+      todoList: this.state.todoList
     })
   }
-  toggle(e,todo){
-    todo.status = todo.status ==='completed' ? '' : 'completed';
-    this.setState(this.state) 
+  toggle(e, todo) {
+    todo.status = todo.status === 'completed' ? '' : 'completed';
+    this.setState(this.state)
   }
-  delete(event,todo){
+  delete(event, todo) {
     todo.deleted = true;
-    this.setState(this.state) 
+    this.setState(this.state)
   }
   addTodo(event) {
-    this.state.todoList.push({
-      id: idMaker(),
-      title: event.target.value,
-      status: null,
-      deleted: false
-    })
-    this.setState({
-      newTodo: '',
-      todoList: this.state.todoList 
-    })
-    console.log(this.state.todoList)
+    if (event.target.value === '') {
+      alert('输入为空')
+    } else {
+      this.state.todoList.push({
+        id: idMaker(),
+        title: event.target.value,
+        status: null,
+        deleted: false
+      })
+      this.setState({
+        newTodo: '',
+        todoList: this.state.todoList
+      })
+    }
+
   }
 }
 
