@@ -10,15 +10,11 @@ class App extends Component {
     super(props)
     this.state = {
       newTodo: '',
-      todoList: [
-        { id: 1, title: '第一个待办' },
-        { id: 2, title: '第二个待办' },
-        { id: 3, title: '第三个待办' },
-      ]
+      todoList: []
     }
   }
   render() {
-    let todos = this.state.todoList.map((item, index) => {
+    let todos = this.state.todoList.filter((item)=> !item.deleted).map((item,index)=> {
       return (
         <li key={index}>
           <TodoItem todo={item} 
@@ -35,7 +31,7 @@ class App extends Component {
           onChange={this.changeTitle.bind(this)}
           onSubmit={this.addTodo.bind(this)}/>
         </div>
-        <ol>
+        <ol className="todoList">
           {todos}
         </ol>
       </div>
