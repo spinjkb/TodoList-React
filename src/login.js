@@ -21,6 +21,7 @@ class Login extends Component {
         e.preventDefault()
         let {username,password} = this.state.formData
         let success=(user)=>{
+            // console.log(success)
             this.props.onSignUp.call(null, user)
         }
         let error = (error)=>{
