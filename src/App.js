@@ -1,26 +1,36 @@
 import React, { Component } from 'react';
 import './App.css';
+import './login.css'
 import TodoInput from './TodoInput';
 import TodoItem from './TodoItem';
 import 'normalize.css';
 import './reset.css';
-import * as localStore from './localStore'
-import AV from 'leancloud-storage'
+// import * as localStore from './localStore'
+import Login from './login'
+// import AV from 'leancloud-storage'
 
-var APP_ID = 'BiV7UkDq4HQzFs90TMrDMJcI-gzGzoHsz';
-var APP_KEY = '7AG8p7wyob46a5iXEoDqDsGe';
-AV.init({
-  appId: APP_ID,
-  appKey: APP_KEY
-});
-
+// var APP_ID = 'BiV7UkDq4HQzFs90TMrDMJcI-gzGzoHsz';
+// var APP_KEY = '7AG8p7wyob46a5iXEoDqDsGe';
+// AV.init({
+//   appId: APP_ID,
+//   appKey: APP_KEY
+// });
+// var TestObject = AV.Object.extend('TestObject');
+// var testObject = new TestObject();
+// testObject.save({
+//   words: 'Hello World!',
+//   name:'jkb'
+// }).then(function(object) {
+//   alert('LeanCloud Rocks!');
+// })
 
 class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
       newTodo: '',
-      todoList: localStore.load('todoList') || []
+      // todoList: localStore.load('todoList') || []
+      todoList: []
     }
   }
   render() {
@@ -44,11 +54,12 @@ class App extends Component {
         <ol className="todoList">
           {todos}
         </ol>
+        <Login/>
       </div>
     );
   }
-  componentDidUpdate(){
-    localStore.save('todoList', this.state.todoList)
+  componentDidUpdate() {
+    // localStore.save('todoList', this.state.todoList)
   }
 
   changeTitle(event) {
