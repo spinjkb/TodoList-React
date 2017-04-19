@@ -59,11 +59,23 @@ class App extends Component {
         <ol className="todoList">
           {todos}
         </ol>
-        {this.state.user.username ? null : <Login onSignUp={this.onSignUp.bind(this)} />}
+        {this.state.user.username ? null :
+          <Login onSignUp={this.onSign.bind(this)}
+            onSignIn={this.onSign.bind(this)}/>}
       </div>
     );
   }
-  onSignUp(user) {
+  // onSignUp(user) {
+  //   let stateCopy = JSON.parse(JSON.stringify(this.state))
+  //   stateCopy.user = user
+  //   this.setState(stateCopy)
+  // }
+  // onSignIn(user){
+  //   let stateCopy = JSON.parse(JSON.stringify(this.state))
+  //   stateCopy.user = user
+  //   this.setState(stateCopy)
+  // }
+  onSign(user){
     let stateCopy = JSON.parse(JSON.stringify(this.state))
     stateCopy.user = user
     this.setState(stateCopy)

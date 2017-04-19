@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './login.css';
-import { signUp } from './leanCloud'
+import { signUp, signIn } from './leanCloud'
 class Login extends Component {
     constructor(props) {
         super(props)
@@ -18,18 +18,67 @@ class Login extends Component {
         })
     }
     signUp(e) {
+        if (!this.state.formData.username || !this.state.formData.password) {
+            alert('请输入用户名或密码')
+            return
+        }
         e.preventDefault()
-        let {username,password} = this.state.formData
-        let success=(user)=>{
+        let {username, password} = this.state.formData
+        let success = (user) => {
             // console.log(success)
             this.props.onSignUp.call(null, user)
         }
-        let error = (error)=>{
-            console.log(error)
+        let error = (error) => {
+            switch (error.code) {
+                case 100:
+                    alert('网络故障')
+                    break
+                case 202:
+                    alert('用户名已被占用')
+                    break
+                case 502:
+                    alert('服务器维护中')
+                    break
+                default:
+                    alert(error)
+                    break
+            }
         }
-        signUp(username,password,success,error)
+        signUp(username, password, success, error)
     }
-    signIn(e) { }
+    signIn(e) {
+        if (!this.state.formData.username||!this.state.formData.password) {
+            alert('请输入用户名或密码')
+            return
+        }
+        e.preventDefault()
+        let {username, password} = this.state.formData
+        let success = (user) => {
+            // console.log(success)
+            this.props.onSignIn.call(null, user)
+        }
+        let error = (error) => {
+            console.log(error.code)
+            switch (error.code) {
+                case 100:
+                    alert('网络故障')
+                    break
+                case 210:
+                    alert('用户名与密码不匹配')
+                    break
+                case 211:
+                    alert('找不到用户')
+                    break
+                case 502:
+                    alert('服务器维护中')
+                    break
+                default:
+                    alert(error)
+                    break
+            }
+        }
+        signIn(username, password, success, error)
+    }
     // changeUsername(e) {
     //     let stateCopy = JSON.parse(JSON.stringify(this.state))  // 用 JSON 深拷贝
     //     stateCopy.formData.username = e.target.value
@@ -84,12 +133,12 @@ class Login extends Component {
             <div className="login">
                 <div className="UserDialog">
                     <nav>
-                        <label><input type="radio" value="signUp" 
-                        checked={this.state.selected === 'signUp'} 
-                        onChange={this.switch.bind(this)}/> 注册</label>
-                        <label><input type="radio" value="signIn" 
-                        checked={this.state.selected === 'signIn'} 
-                        onChange={this.switch.bind(this)}/> 登录</label>
+                        <label><input type="radio" value="signUp"
+                            checked={this.state.selected === 'signUp'}
+                            onChange={this.switch.bind(this)} /> 注册</label>
+                        <label><input type="radio" value="signIn"
+                            checked={this.state.selected === 'signIn'}
+                            onChange={this.switch.bind(this)} /> 登录</label>
                     </nav>
                     <div className="panes">
                         {this.state.selected === 'signUp' ? signUpForm : null}
