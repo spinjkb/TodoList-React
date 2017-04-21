@@ -8,7 +8,7 @@ import './reset.css';
 // import * as localStore from './localStore'
 import Login from './login';
 import { getCurrentUser, signOut } from './leanCloud';
-// import AV from 'leancloud-storage'
+import AV from 'leancloud-storage'
 
 // var APP_ID = 'BiV7UkDq4HQzFs90TMrDMJcI-gzGzoHsz';
 // var APP_KEY = '7AG8p7wyob46a5iXEoDqDsGe';
@@ -29,11 +29,10 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      user: getCurrentUser() || {},
-      // user: {},
+      user: {},
       newTodo: '',
-      // todoList: localStore.load('todoList') || []
-      todoList: []
+      todoList: [],
+      currentUser: null
     }
   }
   render() {
@@ -61,35 +60,72 @@ class App extends Component {
         </ol>
         {this.state.user.username ? null :
           <Login onSignUp={this.onSign.bind(this)}
-            onSignIn={this.onSign.bind(this)}/>}
+            onSignIn={this.onSign.bind(this)} />}
       </div>
     );
   }
-  // onSignUp(user) {
-  //   let stateCopy = JSON.parse(JSON.stringify(this.state))
-  //   stateCopy.user = user
-  //   this.setState(stateCopy)
-  // }
-  // onSignIn(user){
-  //   let stateCopy = JSON.parse(JSON.stringify(this.state))
-  //   stateCopy.user = user
-  //   this.setState(stateCopy)
-  // }
-  onSign(user){
+  onSign(user) {
     let stateCopy = JSON.parse(JSON.stringify(this.state))
     stateCopy.user = user
+    stateCopy.currentUser = getCurrentUser();
     this.setState(stateCopy)
+    this.searchTodo()
   }
   signOut() {
     signOut()
     let stateCopy = JSON.parse(JSON.stringify(this.state))
+    //清空
     stateCopy.user = {}
+    stateCopy.todoList = []
     this.setState(stateCopy)
   }
-  componentDidUpdate() {
-    // localStore.save('todoList', this.state.todoList)
+  saveTodo() {
+    let dataString = JSON.stringify(this.state.todoList)
+    var AVTodos = AV.Object.extend('Todo');
+    var avTodos = new AVTodos();
+    //设置权限
+    var acl = new AV.ACL();
+    acl.setReadAccess(AV.User.current(), true)
+    acl.setWriteAccess(AV.User.current(), true)
+    avTodos.set('content', dataString);
+    avTodos.setACL(acl)
+    avTodos.save().then((todo) => {
+      let stateCopy = JSON.parse(JSON.stringify(this.state))
+      stateCopy.todoList.id = todo.id 
+      this.setState(stateCopy)
+      console.log('保存成功');
+    }, function (error) {
+      alert('保存失败')
+    })
   }
-
+  updateTodo() {
+    let dataString = JSON.stringify(this.state.todoList)
+    let avTodos = AV.Object.createWithoutData('Todo', this.state.todoList.id)
+    avTodos.set('content', dataString)
+    avTodos.save().then(function () {
+      console.log('update success')
+    })
+  }
+  searchTodo() {
+    if (this.state.currentUser) {
+      var query = new AV.Query('Todo');
+      query.find().then((todos) => {
+        let avAlltodos = todos[0]
+        let id = avAlltodos.id
+        let stateCopy = JSON.parse(JSON.stringify(this.state))
+        stateCopy.todoList = JSON.parse(avAlltodos.attributes.content)
+        stateCopy.todoList.id = id 
+        this.setState(stateCopy)
+      }, function (error) {
+        console.error(error)
+      })
+    }
+  }
+  changeTodo() {
+    this.state.todoList.id ? this.updateTodo() : this.saveTodo()
+  }
+  componentDidUpdate() {
+  }
   changeTitle(event) {
     this.setState({
       newTodo: event.target.value,
@@ -99,10 +135,12 @@ class App extends Component {
   toggle(e, todo) {
     todo.status = todo.status === 'completed' ? '' : 'completed';
     this.setState(this.state)
+    this.changeTodo()
   }
   delete(event, todo) {
     todo.deleted = true;
     this.setState(this.state)
+    this.changeTodo()
   }
   addTodo(event) {
     if (event.target.value === '') {
@@ -119,7 +157,7 @@ class App extends Component {
         todoList: this.state.todoList
       })
     }
-
+    this.changeTodo()
   }
 }
 
