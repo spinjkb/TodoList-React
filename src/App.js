@@ -75,7 +75,6 @@ class App extends Component {
   }
   onSign(user) {
     let stateCopy = JSON.parse(JSON.stringify(this.state))
-    console.log(this.state)
     stateCopy.user = user
     stateCopy.currentUser = getCurrentUser();
     this.setState(stateCopy)
