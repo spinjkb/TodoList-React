@@ -29,7 +29,8 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      user: getCurrentUser() || {},
+      // user: getCurrentUser() || {},
+      user: this.unSign() || {},
       newTodo: '',
       todoList: [],
       currentUser: null
@@ -64,9 +65,20 @@ class App extends Component {
       </div>
     );
   }
+  unSign() {
+    if (getCurrentUser()) {
+      this.unSignSearch()
+      // console.log(getCurrentUser())
+      return getCurrentUser()
+    } else {
+      return null
+    }
+  }
   onSign(user) {
     let stateCopy = JSON.parse(JSON.stringify(this.state))
+    console.log(this.state)
     stateCopy.user = user
+    console.log(user)
     stateCopy.currentUser = getCurrentUser();
     this.setState(stateCopy)
     this.searchTodo()
@@ -120,6 +132,20 @@ class App extends Component {
         console.error(error)
       })
     }
+  }
+  unSignSearch() {
+    var query = new AV.Query('Todo');
+    query.find().then((todos) => {
+      let avAlltodos = todos[0]
+      let id = avAlltodos.id
+      let stateCopy = JSON.parse(JSON.stringify(this.state))
+      stateCopy.todoList = JSON.parse(avAlltodos.attributes.content)
+      stateCopy.todoList.id = id
+      this.setState(stateCopy)
+    }, function (error) {
+      console.error(error)
+    })
+
   }
   changeTodo() {
     this.state.todoList.id ? this.updateTodo() : this.saveTodo()
