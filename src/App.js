@@ -29,7 +29,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      user: {},
+      user: getCurrentUser() || {},
       newTodo: '',
       todoList: [],
       currentUser: null
@@ -91,7 +91,7 @@ class App extends Component {
     avTodos.setACL(acl)
     avTodos.save().then((todo) => {
       let stateCopy = JSON.parse(JSON.stringify(this.state))
-      stateCopy.todoList.id = todo.id 
+      stateCopy.todoList.id = todo.id
       this.setState(stateCopy)
       console.log('保存成功');
     }, function (error) {
@@ -114,7 +114,7 @@ class App extends Component {
         let id = avAlltodos.id
         let stateCopy = JSON.parse(JSON.stringify(this.state))
         stateCopy.todoList = JSON.parse(avAlltodos.attributes.content)
-        stateCopy.todoList.id = id 
+        stateCopy.todoList.id = id
         this.setState(stateCopy)
       }, function (error) {
         console.error(error)
